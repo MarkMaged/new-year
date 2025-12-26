@@ -11,18 +11,17 @@ import 'primeicons/primeicons.css'
 import Aura from '@primevue/themes/aura'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
+import Toast from 'primevue/toast'
+
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
-app.use(PrimeVue, {
-  theme: {
-    preset: Aura
-  }
-})
+app.use(PrimeVue, { theme: { preset: Aura } })
 app.use(ToastService)
 
 app.component('InputText', InputText)
 app.component('Button', Button)
+app.component('Toast', Toast)
 
 app.mount('#app')
