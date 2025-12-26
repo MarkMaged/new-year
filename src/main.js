@@ -9,7 +9,6 @@ import PrimeVue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
 import 'primeicons/primeicons.css'
 import Aura from '@primevue/themes/aura'
-import 'primeicons/primeicons.css'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 const app = createApp(App)
