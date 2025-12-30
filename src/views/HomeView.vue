@@ -31,7 +31,7 @@
         align-items: center;
       "
     >
-      <div v-if="!isHaveName">
+      <div v-if="!isHaveName && showInput">
         <div class="scene">
           <form @submit.prevent="onSubmit" class="name-card">
             <div class="p-fluid">
@@ -122,9 +122,7 @@ onMounted(() => {
 const sleighAnimate = ref(false)
 const showInput = ref(false)
 function onSleighEnd(e) {
-  console.log("F",e.animationName);
-
-  if (e.animationName === 'flyIn-b4e148ca') {
+  if (e.animationName.split('-')[0] === 'flyIn') {
     showInput.value = true
   }
 }
