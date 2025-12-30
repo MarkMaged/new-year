@@ -9,6 +9,7 @@ import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin'
 const mainSVG = ref(null)
 const sparkle = ref(null)
 const pContainer = ref(null)
+const audio = ref(null)
 const props = defineProps({
   userName: {
     type: String,
@@ -30,6 +31,25 @@ function formatName(name) {
 }
 
 onMounted(() => {
+    // 🎵 Setup music
+audio.value = new Audio(
+  `${import.meta.env.BASE_URL}audio/happy-new-year-music-457512.mp3`
+)
+
+  audio.value.loop = true
+  // audio.value.muted = true
+  audio.value.play().catch(() => {}) // autoplay (muted) works without interaction
+
+  // Enable sound on first user interaction
+  const enableSound = () => {
+    audio.value.muted = false
+    audio.value.volume = 0.5
+    audio.value.play().catch(() => {})
+    document.removeEventListener('click', enableSound)
+    document.removeEventListener('touchstart', enableSound)
+  }
+  document.addEventListener('click', enableSound)
+  document.addEventListener('touchstart', enableSound)
   // Register GSAP plugins
   gsap.registerPlugin(MorphSVGPlugin, MotionPathPlugin, Physics2DPlugin, DrawSVGPlugin)
 
