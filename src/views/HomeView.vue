@@ -19,7 +19,12 @@
 
     <!-- Santa sleigh -->
     <div class="sleigh-container">
-      <img src="https://iili.io/fukJl49.png" class="sleigh" :class="{ animate: sleighAnimate }" @animationend="onSleighEnd"/>
+      <img
+        src="https://iili.io/fukJl49.png"
+        class="sleigh"
+        :class="{ animate: sleighAnimate }"
+        @animationend="onSleighEnd"
+      />
     </div>
 
     <div
@@ -46,7 +51,7 @@
           </form>
         </div>
       </div>
-    <NewYearComponent v-if="isHaveName" :userName="name" />
+      <NewYearComponent v-if="isHaveName" :userName="name" class="treeComponent" />
     </div>
   </div>
 </template>
@@ -55,7 +60,8 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import NewYearComponent from '@/components/NewYear/NewYearComponent.vue'
-
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { db } from '@/firebase'
 const toast = useToast()
 
 const showSuccess = () => {
@@ -66,11 +72,46 @@ const showSuccess = () => {
     life: 3000,
   })
 }
+
+const showNameNotValid = () => {
+  toast.add({
+    severity: 'error',
+    summary: 'معرفتكش انا كده',
+    detail: 'اكتب اسمك بس يا عم الظريف من غير ارقام او رموز',
+    life: 3000,
+  })
+}
+const showNameHaveTooLong = () => {
+  toast.add({
+    severity: 'error',
+    summary: 'يا عم بقى اختصر',
+    detail: 'اسمك ميجبش اكتر من 20 حرف يا عم انت بلاش ظرافة بقى',
+    life: 3000,
+  })
+}
 const isHaveName = ref(false)
 const name = ref('')
-const onSubmit = () => {
+function isValidName(name) {
+  if (typeof name !== 'string') return false
+  const trimmed = name.trim()
+  if (!trimmed) return false
+  const regex = /^[A-Za-z\u0600-\u06FF\s]+$/
+  return regex.test(trimmed)
+}
+
+const onSubmit = async () => {
   if (name.value) {
-    isHaveName.value = true
+    if (!isValidName(name.value)) return showNameNotValid()
+    if (name.value.length > 20) return showNameHaveTooLong()
+    try {
+      await addDoc(collection(db, 'visitors'), {
+        name: name.value.trim(),
+        createdAt: serverTimestamp(),
+      })
+      isHaveName.value = true
+    } catch (e) {
+      console.error('Error saving name', e)
+    }
   } else {
     showSuccess()
   }
@@ -273,9 +314,21 @@ body {
 
 /* Tweede afbeelding onzichtbaar */
 .bg2 {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
   background-image: url('https://iili.io/fukJMpj.png');
-  opacity: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+
+  z-index: -1;
 }
+
 
 /* santa sleigh */
 
@@ -286,6 +339,7 @@ body {
   position: absolute;
   top: 40%;
   right: -400px; /* start buiten beeld */
+  z-index: 0;
   transform: translateY(-50%);
   pointer-events: none;
 }
