@@ -314,19 +314,8 @@ body {
 
 /* Tweede afbeelding onzichtbaar */
 .bg2 {
-  position: fixed;
-  top: 0;
-  left: 0;
-
-  width: 100%;
-  height: 100%;
-
   background-image: url('https://iili.io/fukJMpj.png');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-
-  z-index: -1;
+  opacity: 0;
 }
 
 
