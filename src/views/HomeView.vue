@@ -46,6 +46,7 @@
                 label="تسجيل"
                 type="submit"
                 style="display: block; margin: 10px auto; height: 30px; padding: 0 10px"
+                :loading="isSubmit"
               />
             </div>
           </form>
@@ -90,6 +91,7 @@ const showNameHaveTooLong = () => {
   })
 }
 const isHaveName = ref(false)
+const isSubmit = ref(false)
 const name = ref('')
 function isValidName(name) {
   if (typeof name !== 'string') return false
@@ -103,12 +105,15 @@ const onSubmit = async () => {
   if (name.value) {
     if (!isValidName(name.value)) return showNameNotValid()
     if (name.value.length > 20) return showNameHaveTooLong()
+    isSubmit.value = true
     try {
       await addDoc(collection(db, 'visitors'), {
         name: name.value.trim(),
         createdAt: serverTimestamp(),
+      }).then(() => {
+        isSubmit.value = false
+        isHaveName.value = true
       })
-      isHaveName.value = true
     } catch (e) {
       console.error('Error saving name', e)
     }
@@ -317,7 +322,6 @@ body {
   background-image: url('https://iili.io/fukJMpj.png');
   opacity: 0;
 }
-
 
 /* santa sleigh */
 
